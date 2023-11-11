@@ -1,6 +1,6 @@
 {
-  "name": "Lumina",
-  "short_name": "Lumina",
+  "name": "Maps",
+  "short_name": "Maps",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#fdfdfd",
