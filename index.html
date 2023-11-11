@@ -4,6 +4,7 @@
 <head>
     <title>Simple Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.css" />
     <style>
 
         #map {
@@ -19,9 +20,9 @@
             background-color: black;
             padding: 10px;
             border-radius: 5px;
+            z-index: 1000;
         }
 
-        /* Make the search bar responsive */
         @media (max-width: 768px) {
             #search-bar {
                 width: 100%;
@@ -36,15 +37,26 @@
     <div id="map"></div>
     <div id="location-info"></div>
     <div id="search-bar">
-        <input type="text" placeholder="Search location...">
-        <button type="button">Search</button>
+        <form id="search-form"></form>
     </div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.js"></script>
     <script>
         var map = L.map('map').setView([0, 0], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        var geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false,
+            collapsed: true
+        }).on('markgeocode', function (e) {
+            var latlng = e.geocode.center;
+            map.setView(latlng, 13);
+            L.marker(latlng).addTo(map);
+        }).addTo(map);
+
+        document.getElementById('search-form').appendChild(geocoder.onAdd(map));
 
         function onLocationFound(e) {
             map.setView(e.latlng);
@@ -67,7 +79,6 @@
 
         map.on('locationfound', onLocationFound);
         map.on('locationerror', onLocationError);
-
 
         map.locate({ setView: true, maxZoom: 16 });
     </script>
